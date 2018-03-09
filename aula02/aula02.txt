@@ -1,0 +1,88 @@
+******************************************************************
+                         Increment
+******************************************************************
+```
+Increment(A, k)
+i <- 0
+enquanto (i < k e A[1]=1) faço
+    A[i] <- 0
+    i <- (i + 1)
+    custo <- (custo + 1)
+se (i < k)
+    então A[1] <- 1
+    custo <- (custo + 1)
+```
+
+
+******************************************************************
+                         Custo Amortizado
+******************************************************************
+
+    O custo amortizado de uma operação é o custo médio da operação
+considerando uma sequência de operações ADT.
+
+Ex. O consummmo de tempo de uma SEQUÊNCIA de n execuções do algoritmo
+Increment é /theta/(n). O consumo de tempo amortizado do algoritmo 
+Increment é /theta/(1), constante.
+    OBS: Increment é um algoritmo q incrementa números binários em uma 
+        unidade por vez.
+
+******************************************************************
+                         Método contábil
+******************************************************************
+
+    $1 paga por uma quant. constante de tempo!
+
+    Pague $2 para mudar A[i] de 0 -> 1
+    Pague $0 para mudar A[i] de 1 -> 0
+    ----------------------------------
+    
+    O Custo amortizado por chamada de Increment: <= $2 
+    (no máximo uma mudança 0 -> 1 é feita).
+    As operações mais baratas "compensam" as mais caras
+
+******************************************************************
+                        Tabelas dinâmicas 
+******************************************************************
+```
+Table-Insert(T, x) -> insere x na tabela T
+se t[T] = 0
+    então aloque tabela[T] com 1 posição
+        t[T] <- 1
+se n[T] = t[T]
+    então aloque nova-tabela[T] com 2*t[T] posições
+```
+
+
+    Alocamos memória nesessária para 1 item, se precisarmos adicionar
+mais um item, DOBRAMOS o tamanho da tabela. O custo é proporcional a
+criar a nova tabela e copiar os itens antigos para ela, além de 
+adicionar o novo item.
+    Para Table-Delete, fazemos o "inverso", ou seja, removemos itens,
+até que a tabela esteja metade ocupada. Quando isso acontece, movemos
+os itens para uma tabela com metade do tamanho.
+
+    Sequência de m operações: T1 -> T2 -> ... -> Tm
+Ti = estado da tabela antes da i-ésima operação.
+Custo REAL da i-ésima operação: Table-insert
+    
+         |1 se há espaço
+    Ci = |1 + ni se tabela cheia
+
+Custo é  O(m) (uma operação)
+Custo de m operações O(m^2) -> Exagero!!
+
+    Custo Total: Sum(i->m)Ci = m + 1 + 2 + 2^2 + ... 2^k (note: k < lg m)
+                             = m + 2^(k+1) - 1
+                             < m + 2m
+                             = 3m => O(m)
+    
+O custo de uma seuqêcnai de m execuções do Algoritmo Table-Insert é \theta\(m)
+=> O custo amortizado do algoritmo Table-Insert é \theta\(1), constante!!
+
+    Para Table-Delete, fazemos o "inverso", ou seja, removemos itens,
+até que a tabela esteja metade ocupada. Quando isso acontece, movemos
+os itens para uma tabela com metade do tamanho. Para esse caso, o tempo amor-
+tizado piora! Sendo \theta\(m^2).
+
+
