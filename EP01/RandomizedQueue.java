@@ -110,7 +110,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         for (int i=0;i<20;i++) {
             testQueue.enqueue(i);
         }
-        System.out.println("There are " + testQueue.size() + " itens in the queue");
+        System.out.println("There are " + testQueue.size() + " items in the queue");
 
         System.out.println("These are 5 of then");
 
@@ -123,11 +123,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             System.out.println(testQueue.dequeue());
         }
         
-        System.out.println("There are " + testQueue.size() + " itens in the queue");
+        System.out.println("There are " + testQueue.size() + " items in the queue");
 
         System.out.println("Testing iterator\n--------------");
 
-        System.out.println("These are the itens that remain in the Randomized Queue");
+        System.out.println("These are the items that remain in the Randomized Queue");
         for (int i : testQueue) {
             System.out.println(i);
         }
