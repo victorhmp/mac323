@@ -131,6 +131,18 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         for (int i : testQueue) {
             System.out.println(i);
         }
+
+        System.out.println("Testing nested iterators\n--------------");
+
+        int n = 5;
+        RandomizedQueue<Integer> queue = new RandomizedQueue<Integer>();
+        for (int i = 0; i < n; i++)
+            queue.enqueue(i);
+        for (int a : queue) {
+            for (int b : queue)
+                System.out.print(a + "-" + b + " ");
+            System.out.println();
+        }
     }
 
 }
