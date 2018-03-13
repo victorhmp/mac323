@@ -1,0 +1,12 @@
+*****************************************************************************
+                                 Union-Find
+*****************************************************************************
+(Análise de complexidade e implementação feita em aula)
+Foram implementadas e analisadas as classes QuickFindUF, QuickUnionUF e
+WeightedQuickUnionUF.
+    Na floresta de árvores disjuntas produzidas durante uma sequência de
+operações de union(), toda árvore com altura `h` tem pelo menos 2^(h) nós.
+
+
+** Como melhorar a performance do Union-Find?
+** Usando path-compresion -> apresentação na próxima aula 
