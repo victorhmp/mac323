@@ -1,0 +1,62 @@
+=======================
+    Pais e filhos
+=======================
+
+    a[1...m] é um vetor representado numa árvore (imagens nos slides de aula).
+Diremos que para qualquer indice ou nó i (comece de 1, facilita análise matemática)
+        - floor(i/2) é pai de i
+        - 2i é o filho esquerdo
+        - (2i + 1) é o filho direito
+
+* Um nó i tem filho esquerdo se 2i <= m
+* Um nó i tem filho direito se 2i+1 <= m
+* Nó 1 é a raíz
+* Um nó i é folha se 2i > m
+
+=======================
+       Níveis
+=======================
+    
+    Cada nível p, exceto o último, tem os nós 2^(p), 2^(p) + 1,
+..., 2^(p+1) - 1.
+
+* O nó i pertence ao nível p = floor(lg i)
+
+=======================
+       Altura
+=======================
+
+    A altura de um nó i é o maior comprimento de um caminho até uma folha.
+
+* A alturra do nó i é dada por: floor(lg (m/i))
+* Altura da árvore = altura da raíz (altura do nó 1)!
+
+========================
+         Heaps
+========================
+
+    Um vetor a[1...m] é um max-heap:
+        
+        a[i/2] >= a[i] -> linguagens não OO
+        a[i/2].compareTo(a[i] >= 0) -> OOP
+
+para i = 2,...,m. Ou seja, numa max-heap, pais são maiores (em valor) do que
+seus filhos. Em min-heaps, a lógica é invertida, os pais são menores do que seus
+filhos.
+
+* É válido o conceito de "sub-heaps", ou heaps dentro de heaps, sendo uma
+  definição recursiva.
+
+** Operação básica de max-heap: balancear os valores da árvore, de tal forma
+que, temos um nó raíz maior do que seus filhos raízes de outros max-heaps. 
+-> Recursividade. (slides de aula possuem representação visual)
+
+* Implementação de Sink.java representa a operação básica
+
+==========================
+       HeapSort
+==========================
+
+    Um excelente exemplo do uso de estruturas de dados eficientes sendo usadas
+para melhorar performance de cheitos muito inteligentes. É também um algoritmo
+de ordenação por inserção, mas de maneira inteligente. 
