@@ -2,26 +2,27 @@
  * Board API
  */
 import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.StdOut;
 import java.lang.IllegalArgumentException;
 
 public class Board {
 
     private int[][] board;
-    private int n;
+    private int N;
 
     // constructor
     public Board(int [][] tiles) {
-        this.board = tiles;
-        this.n = tiles.length;
+        N = tiles.length;
+        board = tiles;
     }
     
     // Returns String representation for this board
     public String toString() {
         StringBuilder s = new StringBuilder();
-        s.append(n + "\n");
-        for (int row = 0; row < n; row++) {
-            for (int col = 0; col < n; col++) {
+        s.append(N + "\n");
+        for (int row = 0; row < N; row++) {
+            for (int col = 0; col < N; col++) {
                 s.append(String.format("%2d ", tileAt(row, col)));
             }
             s.append("\n");
@@ -31,7 +32,7 @@ public class Board {
 
     // Returns tile at (row, col) or 0 if blank
     public int tileAt(int row, int col) {
-        if ((row < 0 || row > n-1) || (col < 0 || col > n-1)) {
+        if ((row < 0 || row > N-1) || (col < 0 || col > N-1)) {
             throw new IllegalArgumentException();
         }
         return board[row][col];
@@ -39,15 +40,15 @@ public class Board {
 
     // Returns board size
     public int size() {
-        return this.n;
+        return this.N;
     }
 
     // Returns number of tiles that are out of place
     public int hamming() {
         int tile = 1;
         int sum = 0;
-        for (int i=0;i<n;i++) {
-            for (int j=0;j<n;j++) {
+        for (int i=0;i<N;i++) {
+            for (int j=0;j<N;j++) {
                 if (this.tileAt(i, j) != tile && this.tileAt(i, j) != 0) {
                     sum++;
                 }
@@ -61,8 +62,8 @@ public class Board {
     // Returns sum of Manhattan distances between tiles and goal
     public int manhattan() {
         int manSum = 0;
-        for (int i=0;i<n;i++) {
-            for (int j = 0; j<n; j++) {
+        for (int i=0;i<N;i++) {
+            for (int j = 0; j<N; j++) {
                 if (this.tileAt(i, j) != 0) {
                     manSum += manCalc(i, j);
                 }
@@ -73,14 +74,14 @@ public class Board {
     // Helper funciction to calculate Manhattan distances
     private int manCalc(int i, int j) {
         // Get expected (i, j) for this tile
-        int destI = this.tileAt(i, j) / n;
-        int destJ = this.tileAt(i, j) % n;
+        int destI = this.tileAt(i, j) / N;
+        int destJ = this.tileAt(i, j) % N;
 
         if (destJ == 0) { 
             // means this tile is a multiple of n
             // so it should "go back" a position
             destI -= 1;
-            destJ = n-1;
+            destJ = N-1;
         }
         else {
             // adjustment to account for multiples always
@@ -104,8 +105,8 @@ public class Board {
         if (y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
         boolean isEqual = true;
-        for (int i=0;i<n;i++) {
-            for(int j = 0; j<n;j++) {
+        for (int i=0;i<N;i++) {
+            for(int j = 0; j<N;j++) {
                 if (this.tileAt(i, j) != (that.tileAt(i, j))){
                     isEqual = false;
                     break;
@@ -123,9 +124,9 @@ public class Board {
     }
 
     private int[][] boardCopy(int[][] origin) {
-        int[][] newBoard = new int[this.n][this.n];
-        for (int i=0;i<n;i++) {
-            for (int j = 0; j < n; j++) {
+        int[][] newBoard = new int[this.N][this.N];
+        for (int i=0;i<N;i++) {
+            for (int j = 0; j < N; j++) {
                 newBoard[i][j] = origin[i][j];
             }
         }
@@ -135,11 +136,11 @@ public class Board {
 
     // Returns Iterable for all neighboring boards
     public Iterable<Board> neighbors() {
-        Stack<Board> returnStack = new Stack<Board>();
+        Queue<Board> returnQueue = new Queue<Board>();
         int zeroI = 0;
         int zeroJ = 0;
-        for (int i=0;i<n;i++) {
-            for (int j = 0;j<n;j++){
+        for (int i=0;i<N;i++) {
+            for (int j = 0;j<N;j++){
                 if (this.tileAt(i, j) == 0) {
                     zeroI = i;
                     zeroJ = j;
@@ -149,25 +150,25 @@ public class Board {
         if (zeroI > 0) {
             int[][] newNeighbor = boardCopy(this.board);
             swapTile(newNeighbor, zeroI-1, zeroJ, zeroI, zeroJ);
-            returnStack.push(new Board(newNeighbor));
+            returnQueue.enqueue(new Board(newNeighbor));
         }
         if (zeroJ > 0) {
             int[][] newNeighbor = boardCopy(this.board);
             swapTile(newNeighbor, zeroI, zeroJ-1, zeroI, zeroJ);
-            returnStack.push(new Board(newNeighbor));
+            returnQueue.enqueue(new Board(newNeighbor));
         }
-        if (zeroI < n-1) {
+        if (zeroI < N-1) {
             int[][] newNeighbor = boardCopy(this.board);
             swapTile(newNeighbor, zeroI+1, zeroJ, zeroI, zeroJ);
-            returnStack.push(new Board(newNeighbor));
+            returnQueue.enqueue(new Board(newNeighbor));
         }
-        if (zeroJ < n-1) {
+        if (zeroJ < N-1) {
             int[][] newNeighbor = boardCopy(this.board);
             swapTile(newNeighbor, zeroI, zeroJ + 1, zeroI, zeroJ);
-            returnStack.push(new Board(newNeighbor));
+            returnQueue.enqueue(new Board(newNeighbor));
         }
 
-        return returnStack;
+        return returnQueue;
     }
 
     // Returns true if this board is solvable
@@ -178,15 +179,15 @@ public class Board {
         // save the row in which zero is placed
         int zeroRow = 0;
 
-        for (int i=0;i<n;i++) {
-            for (int j=0;j<n;j++) {
+        for (int i=0;i<N;i++) {
+            for (int j=0;j<N;j++) {
                 if (this.tileAt(i, j) == 0){
                     zeroRow = i;
                     continue;
                 }
                 int startPoint = j;
-                for (int x = i; x < n; x++) {
-                    for (int y = startPoint; y < n; y++) {
+                for (int x = i; x < N; x++) {
+                    for (int y = startPoint; y < N; y++) {
                         if ((this.tileAt(x, y) < this.tileAt(i, j)) && this.tileAt(x, y)!=0)
                             inversions++;
                     }
