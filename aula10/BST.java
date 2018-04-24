@@ -44,7 +44,7 @@ public class BST<Key extends Comparable<Key>, Value>{
 
   public Value get (Key key) {
     Node x = get(r, key);
-    if (x == null) return null
+    if (x == null) return null;
     
     return x.val;
   }
