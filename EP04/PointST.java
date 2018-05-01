@@ -6,6 +6,7 @@ import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.RedBlackBST;
 import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.BST;
 import java.lang.IllegalArgumentException;
 
 public class PointST<Value> {
@@ -65,6 +66,25 @@ public class PointST<Value> {
       }
     }
     return nearestPoint;
+  }
+
+  public Iterable<Point2D> nearest(Point2D p, int k) {
+    if (p == null) throw new IllegalArgumentException();
+    if (k >= this.size()) return this.points();
+
+    BST<Double, Point2D> bst = new BST<Double, Point2D>();
+    Queue<Point2D> queue = new Queue<Point2D>();
+    for (Point2D i : this.points()) {
+      bst.put(i.distanceSquaredTo(p), i);
+    }
+
+    for (int j = 0; j < k; j++) {
+      Point2D currMin = bst.get(bst.min());
+      queue.enqueue(currMin);
+      bst.deleteMin();
+    }
+
+    return queue;
   }
 
   public static void main(String[] args) {
