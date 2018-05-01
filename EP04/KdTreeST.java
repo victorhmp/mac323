@@ -153,9 +153,38 @@ public class KdTreeST<Value> {
     }
   }
 
-  // public Point2D nearest(Point2D p) {
-    
-  // }
+  public Point2D nearest(Point2D p) {
+    if (p == null) throw new IllegalArgumentException();
+    if (this.isEmpty()) return null;
+
+    return nearest(this.root, p, this.root.p, true);
+  }
+  private Point2D nearest(Node x, Point2D p, Point2D c, boolean useX) {
+    Point2D champion = c;
+    if (x == null) return champion;
+
+    if (x.p.distanceSquaredTo(p) < champion.distanceSquaredTo(p)) {
+      champion = x.p;
+    }
+
+    if (x.rect.distanceSquaredTo(p) < champion.distanceSquaredTo(p)) {
+      Node near;
+      Node far;
+      if ( ( useX && (p.x() < x.p.x()) ) || ( !useX && (p.y() < x.p.y()) ) ) {
+        near = x.leftBottom;
+        far = x.rightUp;
+      }
+      else {
+        far = x.leftBottom;
+        near = x.rightUp;
+      }
+
+      champion = nearest(near, p, champion, !useX);
+      champion = nearest(far, p, champion, !useX);
+    }
+
+    return champion;
+  }
 
   public static void main(String[] args) {
     KdTreeST<Integer> BST = new KdTreeST<Integer>();
