@@ -113,9 +113,21 @@ public class KdTreeST<Value> {
     }
   }
 
-  // public Iterable<Point2D> points() {
-    
-  // }
+  public Iterable<Point2D> points() {
+    Queue<Point2D> points = new Queue<Point2D>();
+    Queue<Node> queue = new Queue<Node>();
+    queue.enqueue(root);
+
+    while (!queue.isEmpty()) {
+      Node x = queue.dequeue();
+      if (x == null) continue;
+      points.enqueue(x.p);
+      queue.enqueue(x.leftBottom);
+      queue.enqueue(x.rightUp);
+    }
+
+    return points;
+  }
 
   // public Iterable<Point2D> range(RectHV rect) {
     
@@ -128,11 +140,11 @@ public class KdTreeST<Value> {
   public static void main(String[] args) {
     KdTreeST<Integer> BST = new KdTreeST<Integer>();
 
-    Point2D p1 = new Point2D(1.0, 4.5);
-    Point2D p2 = new Point2D(2.3, 4.0);
-    Point2D p3 = new Point2D(1.0, 3.0);
-    Point2D p4 = new Point2D(2.5, 4.0);
-    Point2D p5 = new Point2D(5.0, 3.0);
+    Point2D p1 = new Point2D(0.7, 0.2);
+    Point2D p2 = new Point2D(0.5, 0.4);
+    Point2D p3 = new Point2D(0.2, 0.3);
+    Point2D p4 = new Point2D(0.4, 0.7);
+    Point2D p5 = new Point2D(0.9, 0.6);
     Point2D p6 = new Point2D(3.6, 2.5);
     Point2D p7 = new Point2D(2.1, 4.0);
     Point2D p8 = new Point2D(2.1, 4.9);
@@ -144,8 +156,8 @@ public class KdTreeST<Value> {
     BST.put(p3, 3);
     BST.put(p4, 4);
     BST.put(p5, 5);
-    BST.put(p6, 6);
-    BST.put(p7, 7);
+    // BST.put(p6, 6);
+    // BST.put(p7, 7);
     System.out.println("Does the KdTree contain: " + p1 + "? " + BST.contains(p1));
     System.out.println("Does the KdTree contain: " + p2 + "? " + BST.contains(p2));
     System.out.println("Does the KdTree contain: " + p3 + "? " + BST.contains(p3));
@@ -154,8 +166,13 @@ public class KdTreeST<Value> {
     System.out.println("Does the KdTree contain: " + p6 + "? " + BST.contains(p6));
     System.out.println("Does the KdTree contain: " + p7 + "? " + BST.contains(p7));
     System.out.println("Does the KdTree contain: " + p8 + "? " + BST.contains(p8));
-    // for (Point2D i : ST.points()) {
-    //   System.out.println("Point: " + i);
-    // }
+    
+    System.out.println("Value stored in: " + p2 + "? " + BST.get(p2));
+    System.out.println("Value stored in: " + p4 + "? " + BST.get(p4));
+    System.out.println("Value stored in: " + p6 + "? " + BST.get(p6));
+    
+    for (Point2D i : BST.points()) {
+      System.out.println("Point: " + i);
+    }
   }
 }
