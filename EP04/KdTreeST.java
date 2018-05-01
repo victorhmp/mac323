@@ -19,12 +19,12 @@ public class KdTreeST<Value> {
     private Node leftBottom;
     private Node rightUp;
 
-    public Node(Point2D point, Value val) {
+    public Node(Point2D point, Value val, RectHV rect) {
       this.p = point;
       this.value = val;
       this.leftBottom = null;
       this.rightUp = null;
-      // this.rect = rect;
+      this.rect = rect;
     }
   }
 
@@ -43,12 +43,15 @@ public class KdTreeST<Value> {
 
   public void put(Point2D p, Value val) {
     if (p == null || val == null) throw new IllegalArgumentException();
-    root = put(root, p, val, true);
+    root = put(root, p, val, true, 0.0, 0.0, 1.0, 1.0);
   }
-  private Node put (Node x, Point2D point, Value val, boolean useX) {
+  private Node put (Node x, Point2D point, Value val, boolean useX, 
+                    double x0, double y0, double x1, double y1) {
+    
     if (x == null){
       this.N++;
-      return new Node(point, val);
+      RectHV r = new RectHV(x0, y0, x1, y1);
+      return new Node(point, val, r);
     }
     else if (x.p.x() == point.x() && x.p.y() == point.y()) {
       x.value = val;
@@ -56,13 +59,17 @@ public class KdTreeST<Value> {
     }
     if (useX) {
       double cmp = point.x() - x.p.x();
-      if      (cmp < 0) x.leftBottom  = put(x.leftBottom,  point, val, !useX);
-      else     x.rightUp = put(x.rightUp, point, val, !useX);
+      if (cmp < 0) 
+        x.leftBottom  = put(x.leftBottom,  point, val, !useX, x0, y0, x.p.x(), y1);
+      else
+        x.rightUp = put(x.rightUp, point, val, !useX, x.p.x(), y0, x1, y1);
     }
     else {
       double cmp = point.y() - x.p.y();
-      if      (cmp < 0) x.leftBottom  = put(x.leftBottom,  point, val, !useX);
-      else     x.rightUp = put(x.rightUp, point, val, !useX);
+      if (cmp < 0)
+        x.leftBottom  = put(x.leftBottom,  point, val, !useX, x0, y0, x1, x.p.y());
+      else
+        x.rightUp = put(x.rightUp, point, val, !useX, x0, x.p.y(), x1, y1);
     }
     return x;
   }
@@ -129,9 +136,22 @@ public class KdTreeST<Value> {
     return points;
   }
 
-  // public Iterable<Point2D> range(RectHV rect) {
-    
-  // }
+  public Iterable<Point2D> range(RectHV rect) {
+    if (rect == null) throw new IllegalArgumentException();
+    Queue<Point2D> q = new Queue<Point2D>();
+    range(root, rect, q);
+    return q;
+  }
+  private void range(Node node, RectHV rect, Queue<Point2D> q) {
+    if (node == null) return;
+    if (rect.contains(node.p)) {
+      q.enqueue(node.p);
+    }
+    if (rect.intersects(node.rect)) {
+      range(node.leftBottom, rect, q);
+      range(node.rightUp, rect, q);
+    }
+  }
 
   // public Point2D nearest(Point2D p) {
     
