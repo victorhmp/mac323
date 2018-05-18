@@ -15,8 +15,10 @@
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.BST;
 import edu.princeton.cs.algs4.In;
 import java.util.Comparator;
+
 
 /**
  *  The {@code TST} class represents an symbol table of key-value
@@ -218,7 +220,27 @@ public class MeuTST<Value extends Comparable<Value>> {
      */
     // all keys starting with given prefix
     public Iterable<String> keysWithPrefixByValue(String prefix) {
-        return keysWithPrefix(prefix);
+        if (prefix == null) throw new IllegalArgumentException();
+        BST<String, Value> keyAuxBST = populateAuxBST(prefix);
+        
+        Queue<String> orderedQueue = new Queue<String>();
+
+        while (!keyAuxBST.isEmpty()) {
+            orderedQueue.enqueue(keyAuxBST.max());
+            keyAuxBST.deleteMax();
+        }
+
+        return orderedQueue;
+    }
+
+    private BST<String, Value> populateAuxBST(String pre) {
+        BST<String, Value> newBST = new BST<String, Value>();
+
+        for (String s : keysWithPrefix(pre)) {
+            newBST.put(s, get(s));
+        }
+
+        return newBST;
     }
      
     
@@ -274,7 +296,35 @@ public class MeuTST<Value extends Comparable<Value>> {
      * inspiração.
      */
     public void delete(String key) {
-        // TAREFA
+        if (key == null) throw new NullPointerException();
+        delete(root, key, 0);
+    }
+    private void delete(Node<Value> x, String key, int d) {
+        if (x == null) return;
+
+        // get current character to search
+        char c = key.charAt(d);
+        
+        // c < x.c => x.c is a miss and we go left
+        if (c < x.c)
+            delete(x.left, key, d);
+        
+        // c > x.c => x.c is a miss and we go right
+        else if (c > x.c)
+            delete(x.right, key, d);
+
+        // if c == x.c => search hit. If x.c is also the last key char,
+        // then set x.val to null and 'remove' the Node
+        else if (c == x.c && x.val != null && d == key.length() - 1) {
+            x.val = null;
+            this.n--;
+        }
+
+        // if c == x.c => search hit. But if x.c is not the final char,
+        // then we just go down the middle
+        else {
+            delete(x.mid, key, d+1);
+        }
     }
 
     
