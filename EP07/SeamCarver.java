@@ -11,6 +11,7 @@ public class SeamCarver {
     private int picHeight;
 
     public SeamCarver(Picture picture) {
+        if (picture == null) throw new IllegalArgumentException();
         this.workingPic = picture;
         this.picHeight = picture.height();
         this.picWidth = picture.width();
