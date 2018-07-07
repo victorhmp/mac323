@@ -24,7 +24,6 @@ public class SeamCarver {
             }
         }
     }
-
     
     private getWorkingPic() {
         return this.workingPic;
@@ -47,8 +46,26 @@ public class SeamCarver {
         return getPicHeight();
     }
 
+    private double getPixelEnergy(int x, int y) {
+        Color left = this.colors[x][y-1];
+        Color right = this.colors[x][y+1];
+        Color up = this.colors[x-1][y];
+        Color down = this.colors[x+1][y-1];
+
+        double Rx = right.getRed() - left.getRed();
+        double Gx = right.getGreen() - left.getGreen();
+        double Bx = right.getBlue() - left.getBlue();
+        double Ry = down.getRed() - up.getRed(); 
+        double Gy = down.getGreen() - up.getGreen(); 
+        double By = down.getBlue() - up.getBlue();
+
+        double xGradientSquared = Rx*Rx + Gx*Gx + Bx*Bx;
+        double yGradientSquared = Ry*Ry + Gy*Gy + By*By;
+
+        return Math.sqrt(xGradientSquared + yGradientSquared);
+    }
     public double energy(int x, int y) {
-        // energy of pixel at column x and row y
+        return getPixelEnergy(x, y);
     }
 
     public int[] findHorizontalSeam() {
