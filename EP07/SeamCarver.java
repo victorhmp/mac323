@@ -46,7 +46,7 @@ public class SeamCarver {
         return getPicHeight();
     }
 
-    private double getPixelEnergy(int x, int y, Color[][] colors) {
+    private double getPixelEnergy(int x, int y) {
         Color left, right, up, down;
 
         if (x == 0) {
@@ -92,7 +92,7 @@ public class SeamCarver {
             throw new IllegalArgumentException();
         if (y < 0 || y > this.picHeight-1)
             throw new IllegalArgumentException();
-        return getPixelEnergy(x, y, this.colors);
+        return getPixelEnergy(x, y);
     }
 
     private double[][] transposePicture() {
@@ -237,11 +237,43 @@ public class SeamCarver {
     }
 
     public void removeHorizontalSeam(int[] seam) {
-        // remove horizontal seam from current picture
+
+        double[][] pixelEnergy = createEnergyMatrix();
+
+        for (int y = 0; y < this.picWidth - 1; y++){
+            for (int x = seam[y]; x < this.picHeight - 1; x++) {
+                this.colors[x][y] = this.colors[x + 1][y];
+                pixelEnergy[x][y] = pixelEnergy[x + 1][y];
+            }
+        }
+        
+        this.picHeight--;
+        
+        for (int y = 1; y < this.picWidth - 1; y++) {
+            int cutLoc = seam[y];
+            if (cutLoc > 1) pixelEnergy[cutLoc - 1][y] = getPixelEnergy(cutLoc - 1, y);
+            if (cutLoc < this.picHeight - 1) pixelEnergy[cutLoc][y] = getPixelEnergy(cutLoc, y);
+        }
+        
     }
 
     public void removeVerticalSeam(int[] seam) {
-        // remove vertical seam from current picture
+
+        double[][] pixelEnergy = createEnergyMatrix();
+
+        for (int row = 0; row < this.picHeight; row++) {
+            int cutLoc = seam[row];
+            System.arraycopy(this.colors[row], cutLoc + 1, this.colors[row], cutLoc, this.picWidth - 1 - cutLoc);
+            System.arraycopy(pixelEnergy[row], cutLoc + 1, pixelEnergy[row], cutLoc, this.picWidth - 1 - cutLoc);
+        }
+        
+        this.picWidth--;
+        
+        for (int row = 1; row < this.picHeight - 1; row++) {
+            int cutLoc = seam[row];
+            if (cutLoc > 1) pixelEnergy[row][cutLoc - 1] = getPixelEnergy(row, cutLoc - 1);
+            if (cutLoc < this.picWidth - 1) pixelEnergy[row][cutLoc] = getPixelEnergy(row, cutLoc);
+        }
     }
 
     public static void main(String[] args) {
