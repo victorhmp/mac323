@@ -25,7 +25,7 @@ public class SeamCarver {
         }
     }
     
-    private getWorkingPic() {
+    private Picture getWorkingPic() {
         return this.workingPic;
     }
     public Picture picture() {
@@ -47,10 +47,36 @@ public class SeamCarver {
     }
 
     private double getPixelEnergy(int x, int y) {
-        Color left = this.colors[x][y-1];
-        Color right = this.colors[x][y+1];
-        Color up = this.colors[x-1][y];
-        Color down = this.colors[x+1][y-1];
+        Color left;
+        Color right;
+        Color up;
+        Color down;
+
+        if (x == 0) {
+            up = colors[y][this.picWidth - 1];
+            down = colors[y][x+1];
+        }
+        else if (x == this.picWidth - 1) {
+            up = colors[y][x-1];
+            down = colors[y][0];
+        }
+        else {
+            up = colors[y][x-1];
+            down = colors[y][x+1];
+        }
+
+        if (y == 0) {
+            left = colors[this.picHeight-1][x];
+            right = colors[y+1][x];
+        }
+        else if (y == this.picHeight - 1) {
+            left = colors[y-1][x];
+            right = colors[0][x];
+        }
+        else {
+            left = colors[y-1][x];
+            right = colors[y+1][x];
+        }
 
         double Rx = right.getRed() - left.getRed();
         double Gx = right.getGreen() - left.getGreen();
