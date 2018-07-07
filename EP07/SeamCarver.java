@@ -91,6 +91,10 @@ public class SeamCarver {
         return Math.sqrt(xGradientSquared + yGradientSquared);
     }
     public double energy(int x, int y) {
+        if (x < 0 || x > this.picWidth-1)
+            throw new IllegalArgumentException();
+        if (y < 0 || x > this.picHeight-1)
+            throw new IllegalArgumentException();
         return getPixelEnergy(x, y);
     }
 
