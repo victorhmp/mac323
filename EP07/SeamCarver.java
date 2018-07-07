@@ -1,22 +1,41 @@
+import java.awt.Color;
+import edu.princeton.cs.algs4.Picture;
+
 /**
  * SeamCarver
  */
 public class SeamCarver {
 
+    private Picture workingPic;
+    private int picWidth;
+    private int picHeight;
+
     public SeamCarver(Picture picture) {
-        // Constructor
+        this.workingPic = picture;
+        this.picHeight = picture.height();
+        this.picWidth = picture.width();
     }
 
+    
+    private getWorkingPic() {
+        return this.workingPic;
+    }
     public Picture picture() {
-        // current picture
+        return getWorkingPic();
     }
 
+    private int getPicWidth() {
+        return this.picWidth;
+    }
     public int width() {
-        // width of current picture
+        return getPicWidth();
     }
 
+    private int getPicHeight() {
+        return this.picHeight;
+    }
     public int height() {
-        // Height of current picture
+        return getPicHeight();
     }
 
     public double energy(int x, int y) {
