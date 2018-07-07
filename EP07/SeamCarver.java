@@ -47,10 +47,7 @@ public class SeamCarver {
     }
 
     private double getPixelEnergy(int x, int y) {
-        Color left;
-        Color right;
-        Color up;
-        Color down;
+        Color left, right, up, down;
 
         if (x == 0) {
             up = colors[y][this.picWidth - 1];
@@ -93,17 +90,82 @@ public class SeamCarver {
     public double energy(int x, int y) {
         if (x < 0 || x > this.picWidth-1)
             throw new IllegalArgumentException();
-        if (y < 0 || x > this.picHeight-1)
+        if (y < 0 || y > this.picHeight-1)
             throw new IllegalArgumentException();
         return getPixelEnergy(x, y);
     }
 
-    public int[] findHorizontalSeam() {
-        // sequence of indices for horizontal seam
-    }
+    // public int[] findHorizontalSeam() {
+    //     // sequence of indices for horizontal seam
+    // }
     
-    public int[] findverticalSeam() {
-        // sequence of indices for vertical seam
+    private double[][] createEnergyMatrix() {
+        double[][] pixelEnergy = new double[this.picHeight][this.picWidth];
+        for (int i = 0; i < this.picHeight; i++) {
+            for (int j = 0; j < this.picWidth; j++) {
+                pixelEnergy[i][j] = energy(i, j);
+            }
+        }
+
+        return pixelEnergy;
+    }
+    public int[] findVerticalSeam() {
+        int[] pixelTo = new int[this.picWidth * this.picHeight];
+        double[] energyTo = new double[this.picWidth * this.picHeight];
+
+        double[][] pixelEnergy = createEnergyMatrix();
+
+        for (int x = 1; x < this.picHeight - 1; x++) {
+            for (int y = 1; y < this.picWidth - 1; y++) {
+                energyTo[x * this.picWidth + y] = Double.POSITIVE_INFINITY;
+            }
+        }
+
+        for (int x = 1; x < this.picHeight - 1; x++) {
+            for (int y = 1; y < this.picWidth - 1; y++) {
+                int prevPix = (x - 1) * this.picWidth + y;
+                int leftPix = x * this.picWidth + y - 1;
+                int midPix = x * this.picWidth + y;
+                int rightPix = x * this.picWidth + y + 1;
+                
+                double energyLeft = pixelEnergy[x][y - 1] + energyTo[prevPix];
+                double energyMid = pixelEnergy[x][y] + energyTo[prevPix];
+                double energyRight = pixelEnergy[x][y + 1] + energyTo[prevPix];
+                
+                if (leftPix != 0 && energyTo[leftPix] > energyLeft) {
+                    energyTo[leftPix] = energyLeft;
+                    pixelTo[leftPix] = y;
+                }
+                
+                if (energyTo[midPix] > energyMid) {
+                    energyTo[midPix] = energyMid;
+                    pixelTo[midPix] = y;
+                }
+                
+                if (rightPix != this.picWidth - 1 && energyTo[rightPix] > energyRight) {
+                    energyTo[rightPix] = energyRight;
+                    pixelTo[rightPix] = y;
+                }
+            }
+        }
+
+        int[] verticalSeam = new int[this.picHeight];
+        double lowestEnergy = Double.POSITIVE_INFINITY;
+
+        for (int y = 1; y < this.picWidth - 1; y++) {
+            int curPix = (this.picHeight - 2) * this.picWidth + y;
+            if (energyTo[curPix] < lowestEnergy) {
+                lowestEnergy = energyTo[curPix];
+                verticalSeam[this.picHeight - 2] = y;
+                verticalSeam[this.picHeight - 1] = y;
+            }
+        }
+
+        for (int x = this.picHeight - 3; x >= 0; x--){
+            verticalSeam[x] = pixelTo[(x + 1) * this.picWidth + verticalSeam[x + 1]];
+        }
+
+        return verticalSeam;       
     }
 
     public void removeHorizontalSeam(int[] seam) {
